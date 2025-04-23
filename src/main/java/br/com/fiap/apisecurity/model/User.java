@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "tb_user")
-public class User implements UserDetails{
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -19,11 +19,12 @@ public class User implements UserDetails{
     private String password;
     private UserRole role;
 
-    public User(String password, UserRole role, String username) {
-        this.password = password;
-        this.username = username;
-        this.role = role;
+    public User() {}
 
+    public User(String username, String password, UserRole role) {
+        this.username = username;
+        this.password = password;
+        this.role = role;
     }
 
     @Override
@@ -31,38 +32,38 @@ public class User implements UserDetails{
         if (UserRole.ADMIN.equals(role)) {
             return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"),
                     new SimpleGrantedAuthority("ROLE_USER"));
-        }else {
+        } else {
             return List.of(new SimpleGrantedAuthority("ROLE_USER"));
         }
     }
 
     @Override
     public String getPassword() {
-        return "";
+        return password;
     }
 
     @Override
     public String getUsername() {
-        return "";
+        return username;
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return UserDetails.super.isAccountNonExpired();
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return UserDetails.super.isAccountNonLocked();
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return UserDetails.super.isCredentialsNonExpired();
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
+        return true;
     }
 }

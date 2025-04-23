@@ -24,26 +24,27 @@ public class AuthController {
     @Autowired
     private UserRepository userRepository;
 
-
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody @Valid AuthDTO authDTO){
+    public ResponseEntity login(@RequestBody @Valid AuthDTO authDTO) {
         var userPwd = new UsernamePasswordAuthenticationToken(
                 authDTO.username(),
                 authDTO.password());
-        var auth = this.authenticationManager.authenticate(userPwd);
+        //var auth = this.authenticationManager.authenticate(userPwd);
         return ResponseEntity.ok().build();
     }
+
     @PostMapping("/register")
-    public ResponseEntity register(@RequestBody @Valid RegisterDTO registerDTO){
-        if (userRepository.findByUsername(registerDTO.username()) != null){
+    public ResponseEntity register(@RequestBody @Valid RegisterDTO registerDTO) {
+        if (userRepository.findByUsername(registerDTO.username()) != null) {
             return ResponseEntity.badRequest().build();
         }
-        String encryptedPwd = new BCryptPasswordEncoder().encode(registerDTO.password());
-        User newUser = new User(registerDTO.username(), encryptedPwd, registerDTO.userRole());
+        String encryptedPwd = new BCryptPasswordEncoder()
+                .encode(registerDTO.password());
+        User newUser = new User(
+                registerDTO.username(),
+                encryptedPwd,
+                registerDTO.role());
         userRepository.save(newUser);
         return ResponseEntity.ok().build();
-
     }
-
-
 }

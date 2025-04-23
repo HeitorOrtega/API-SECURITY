@@ -1,4 +1,4 @@
-package br.com.fiap.apisecurity.security;
+package br.com.fiap.apisecurity.service;
 
 import br.com.fiap.apisecurity.model.User;
 import com.auth0.jwt.JWT;
@@ -15,9 +15,9 @@ import java.time.ZoneOffset;
 @Service
 public class TokenService {
     @Value("${api.security.token.secret}")
-    public String secret;
+    private String secret;
 
-    public String generatedToken (User user ) {
+    public String generateToken(User user) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.create()
@@ -25,8 +25,8 @@ public class TokenService {
                     .withSubject(user.getUsername())
                     .withExpiresAt(genExpirationInstant())
                     .sign(algorithm);
-        } catch (JWTCreationException exception){
-            throw new RuntimeException("Erro ao gerar token", exception);
+        } catch (JWTCreationException exception) {
+            throw new RuntimeException("Erro na geração de token", exception);
         }
     }
 
@@ -37,17 +37,16 @@ public class TokenService {
                 .toInstant(ZoneOffset.of("-03:00"));
     }
 
-    public String verifyToken(String token) {
-        try{
+    public String validateToken(String token) {
+        try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.require(algorithm)
                     .withIssuer("apisecurity")
                     .build()
                     .verify(token)
                     .getSubject();
-        }catch(JWTVerificationException exception){
-            return "Erro ao verificar token";
+        } catch (JWTVerificationException exception) {
+            return "";
         }
     }
-
 }
